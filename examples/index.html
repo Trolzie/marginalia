@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>&lt;side-note&gt; — demo</title>
+    <style>
+      :root {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 18px;
+        line-height: 1.6;
+        color: #222;
+        background: #fafafa;
+      }
+      body {
+        margin: 0;
+        padding: 4rem 0;
+      }
+      h1 {
+        font-size: 1.8em;
+        margin-bottom: 2rem;
+      }
+      p {
+        margin: 0 0 1.2em;
+      }
+      code {
+        background: #eee;
+        padding: 0 0.25em;
+        border-radius: 3px;
+        font-size: 0.95em;
+      }
+    </style>
+    <script type="module" src="/src/index.ts"></script>
+  </head>
+  <body>
+    <article class="has-sidenotes">
+      <h1>&lt;side-note&gt; demo</h1>
+
+      <p>
+        The marginalia tradition predates the printing press
+        <side-note>
+          The earliest known examples appear in 8th-century Irish gospel books,
+          with both scribal corrections and devotional commentary in the margins.
+        </side-note>
+        by several centuries, and persisted as a legitimate scholarly form
+        well into the early modern period before being slowly displaced by
+        the convention of footnotes at the bottom of the page.
+      </p>
+
+      <p>
+        Tufte's <em>Visual Display</em>
+        <side-note side="left">
+          Edward Tufte, <em>The Visual Display of Quantitative Information</em>,
+          1983 — and a <code>side="left"</code> demonstration of the same
+          mechanism on the opposite side.
+        </side-note>
+        revived sidenotes for a generation of designers, and the convention
+        has spread from print into the Tufte-CSS family of stylesheets that
+        inspired this component.
+      </p>
+
+      <p>
+        Authors can also override the auto-incremented marker
+        <side-note label="*">
+          A custom label like an asterisk is useful for editorial notes
+          that you want to distinguish from numbered citations.
+        </side-note>
+        when an asterisk or dagger is more appropriate than a number.
+      </p>
+
+      <p>
+        The note's body can contain <em>any</em> inline content
+        <side-note>
+          Including <a href="https://example.com">links</a>,
+          <code>inline code</code>, <strong>strong emphasis</strong>,
+          and any other phrasing-content the author needs.
+        </side-note>
+        and styling stays consistent with the surrounding prose because
+        the host inherits the document's font.
+      </p>
+    </article>
+  </body>
+</html>

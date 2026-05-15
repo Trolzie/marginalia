@@ -1,0 +1,69 @@
+{
+  "name": "side-note",
+  "version": "0.1.0",
+  "description": "A custom HTML element for Tufte-style sidenotes — inline marker, body floats into the page margin.",
+  "type": "module",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/index.umd.js",
+  "jsdelivr": "./dist/index.umd.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": [
+    "./src/index.ts",
+    "./dist/index.js",
+    "./dist/index.umd.js"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint . --ext .ts --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "web-component",
+    "custom-element",
+    "sidenote",
+    "marginalia",
+    "tufte",
+    "footnote",
+    "html"
+  ],
+  "license": "MIT",
+  "author": "Troels Lauritz Reese Christensen <trolz@hey.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Trolzie/marginalia.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Trolzie/marginalia/issues"
+  },
+  "homepage": "https://github.com/Trolzie/marginalia#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "happy-dom": "^15.11.0",
+    "prettier": "^3.4.0",
+    "typescript": "^5.6.0",
+    "vite": "^5.4.0",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^2.1.0"
+  }
+}

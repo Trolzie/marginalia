@@ -1,0 +1,16 @@
+node_modules/
+dist/
+
+# only the npm lockfile is committed; contributors using pnpm/bun stay free
+pnpm-lock.yaml
+yarn.lock
+bun.lockb
+
+.DS_Store
+*.log
+.vite/
+coverage/
+
+# local Claude Code session state — not part of the project
+.claude/
+logs/
