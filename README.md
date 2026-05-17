@@ -2,6 +2,8 @@
 
 A custom HTML element for sidenotes: write notes inline in your prose, and they render in the page margin alongside the paragraph that anchors them — the convention popularised by Edward Tufte and revived by [Tufte CSS](https://edwardtufte.github.io/tufte-css/). One tag, no framework, no runtime dependencies.
 
+**Live demo:** [trolzie.github.io/marginalia](https://trolzie.github.io/marginalia/)
+
 ```html
 <article class="has-sidenotes">
   <p>

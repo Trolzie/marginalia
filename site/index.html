@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>&lt;side-note&gt; — a web component for marginalia</title>
+    <meta
+      name="description"
+      content="A custom HTML element for Tufte-style sidenotes — inline marker, body floats into the page margin. Framework-agnostic, zero runtime dependencies."
+    />
+    <meta property="og:title" content="<side-note> — a web component for marginalia" />
+    <meta
+      property="og:description"
+      content="Tufte-style sidenotes as a single HTML element. Framework-agnostic, zero runtime dependencies."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="../src/index.ts"></script>
+  </head>
+  <body>
+    <article class="has-sidenotes">
+      <header>
+        <h1><code>&lt;side-note&gt;</code></h1>
+        <p class="tagline">
+          Tufte-style sidenotes for the modern web — as a single HTML element.
+        </p>
+      </header>
+
+      <section>
+        <h2>What it is</h2>
+
+        <p>
+          <code>&lt;side-note&gt;</code> is a custom HTML element
+          <side-note>
+            A custom element is part of the Web Components spec — a way to
+            register your own HTML tags directly with the browser. No
+            framework required.
+          </side-note>
+          that turns inline content into a sidenote in the page margin.
+          Authors write the note exactly where they want the marker to appear
+          in the prose; the component places a numbered superscript at that
+          position and floats the note's body out into the gutter alongside
+          the paragraph.
+        </p>
+
+        <p>
+          The convention is centuries old.
+          <side-note>
+            The earliest surviving examples appear in 8th-century Irish
+            gospel books, with both scribal corrections and devotional
+            commentary in the margins.
+          </side-note>
+          Margins were once a primary site of intellectual work —
+          corrections, cross-references, commentary, doubt — before
+          footnotes pushed them to the bottom of the page in the early
+          modern era. Edward Tufte's work on information design
+          <side-note>
+            Tufte's <em>The Visual Display of Quantitative Information</em>
+            (1983) reintroduced sidenotes to a generation of designers who'd
+            grown up with footnotes-by-default.
+          </side-note>
+          revived them for serious readers in the 1980s, and the convention
+          has since spread from print into the Tufte-CSS family of
+          stylesheets that inspired this component.
+        </p>
+
+        <p>
+          There's no framework requirement.
+          <side-note side="left">
+            Demonstrating <code>side="left"</code>. Notes can land on either
+            margin — the attribute uses logical sides, so
+            <code>dir="rtl"</code> flips them automatically.
+          </side-note>
+          The element registers itself directly with the browser via the
+          Custom Elements API and works inside any HTML page, whether
+          you're writing React, Astro, plain hand-coded HTML, or none of
+          the above.
+        </p>
+      </section>
+
+      <section>
+        <h2>Design choices</h2>
+
+        <p>
+          Each note is rendered inside an open shadow root
+          <side-note>
+            "Open" so authors can inspect the rendered output during
+            debugging. Closed shadow roots block external inspection
+            without offering a meaningful security benefit for a
+            presentation component.
+          </side-note>
+          with two structural pieces: a <code>&lt;span&gt;</code> for the
+          superscript marker, and an <code>&lt;aside&gt;</code> for the
+          note's body. The <code>&lt;aside&gt;</code> is HTML's semantic
+          wrapper for tangentially related content, and screen readers
+          announce it appropriately.
+        </p>
+
+        <p>
+          Numbering uses CSS counters
+          <side-note>
+            A <code>counter-reset: sidenote</code> on the container and
+            <code>counter-increment: sidenote</code> on each note element.
+            The counter value is read by both the marker and the margin
+            note, keeping them visually in sync without any JavaScript
+            bookkeeping.
+          </side-note>
+          rather than a JavaScript counter, which means numbers stay
+          correct regardless of how nodes are inserted, rendered, or
+          hydrated. Authors who need a custom marker — an asterisk
+          <side-note label="*">
+            A custom <code>label="*"</code> overrides the auto-incremented
+            number. Useful for editorial notes that should read distinct
+            from numbered citations.
+          </side-note>
+          or a dagger, say — can override per-note via the
+          <code>label</code> attribute.
+        </p>
+
+        <p>
+          For positioning, the note is absolutely positioned against the
+          nearest <code>.has-sidenotes</code> ancestor,
+          <side-note>
+            The container needs <code>position: relative</code> and reserves
+            a right-side gutter via <code>padding-inline-end</code>. The
+            component injects this stylesheet into the document head once
+            on first connect — no setup required beyond adding the wrapper
+            class.
+          </side-note>
+          which gives the note a stable visual anchor relative to the
+          paragraph while leaving the source DOM untouched. No reparenting;
+          the element you wrote in the prose is the element the browser
+          renders.
+        </p>
+      </section>
+
+      <section>
+        <h2>Authoring</h2>
+
+        <p>
+          Wrap a prose container in <code>class="has-sidenotes"</code> and
+          drop the element inline:
+        </p>
+
+        <pre><code>&lt;article class="has-sidenotes"&gt;
+  &lt;p&gt;
+    Some prose
+    &lt;side-note&gt;A note in the margin.&lt;/side-note&gt;
+    continues on.
+  &lt;/p&gt;
+&lt;/article&gt;</code></pre>
+
+        <p>
+          The note's body accepts any inline content
+          <side-note>
+            Including <a href="https://github.com/Trolzie/marginalia">links</a>,
+            <code>inline code</code>, <em>emphasis</em>, and any other
+            phrasing content the author needs. Styling stays consistent
+            because the host inherits the document's font.
+          </side-note>
+          — links, code, emphasis, anything that makes sense alongside a
+          paragraph.
+        </p>
+      </section>
+
+      <footer>
+        <p>
+          <a href="https://github.com/Trolzie/marginalia">Source on GitHub</a>
+          · MIT licensed · v0.1, milestone 1 of 4 — see the
+          <a href="https://github.com/Trolzie/marginalia#readme">README</a>
+          for what's coming next.
+        </p>
+      </footer>
+    </article>
+  </body>
+</html>
