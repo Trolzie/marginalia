@@ -40,21 +40,25 @@ What that renders as (at wide viewports):
 
 `<side-note>` is one tag, no setup beyond a wrapper class, zero runtime deps, framework-free. Works in any HTML page, with or without a build step.
 
-## What's in v0.1
+## What's in v0.2
 
-Milestone 1 of 4 — the bare element with wide-viewport margin display. Working today:
+Milestones 1 and 2 of 4 — the bare element with margin display, narrow-viewport inline display, and collision-aware stacking. Working today:
 
 - Inline authoring (`<side-note>` anywhere in flow content)
 - Auto-incremented numbering, with `label` override
 - `side="left"` / `"right"` (logical sides — `dir="rtl"` flips automatically)
+- **Wide viewport (> 60rem): notes display in the margin**
+- **Narrow viewport (≤ 60rem): notes flow inline as italic parentheticals — pure CSS, no JavaScript needed**
+- **Collision-aware stacking at wide viewports**: when two markers sit close together, the second note stacks below the first instead of overlapping. Pure presentation; if JavaScript fails to load, notes fall back to anchor-only positioning (the M1 behaviour) and content stays fully accessible
+- **`inline` attribute to force inline display at any viewport**
 - Shadow-DOM encapsulation with `::part(marker)` / `::part(note)` for theming
-- Generated IDs and ARIA wiring (`role="doc-noteref"`, `aria-describedby`)
+- Generated IDs and DPUB-ARIA wiring (`role="doc-noteref"` on marker, `role="doc-footnote"` on note, `aria-describedby` linking them)
 
 Not yet — landing in later milestones (see [Roadmap](#roadmap)):
 
-- Popover mode on narrow viewports (milestone 2)
-- Collision detection between vertically-adjacent notes (milestone 3)
+- Fallback positioning when no `.has-sidenotes` container exists (milestone 3)
 - Print-mode endnote stylesheet (milestone 3)
+- `MutationObserver` for content edits that don't change container size (milestone 3)
 
 ## Install
 
@@ -117,7 +121,7 @@ Or from a CDN with no build step:
 | `side` | `"right"` \| `"left"` | `"right"` | Which margin the note floats into. Treated as logical sides — `dir="rtl"` flips automatically. |
 | `label` | any string | — | Overrides the auto-incremented number. Use for `*`, `†`, or to reuse a number across two related notes. |
 | `id` | any string | auto-generated | Standard. If absent, a stable id is generated so `aria-describedby` always resolves. |
-| `inline` | boolean | — | Reserved for milestone 2 (force popover behaviour). No-op in v0.1. |
+| `inline` | boolean | — | When present, the note always renders inline (as an italic parenthetical) regardless of viewport width. |
 
 ## CSS custom properties
 
@@ -154,8 +158,8 @@ No legacy / Internet Explorer support — web components and `:has()` are out of
 ## Roadmap
 
 1. ✅ **Milestone 1** — bare element, shadow DOM, attributes, CSS-counter numbering, wide-viewport margin display.
-2. **Milestone 2** — responsive popover mode using the [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API), `matchMedia` breakpoint switching, full ARIA wiring, Playwright tests.
-3. **Milestone 3** — collision detection, fallback positioning when no `.has-sidenotes` container exists, `@media print` endnote stylesheet, `MutationObserver` for dynamic content.
+2. ✅ **Milestone 2** — responsive inline display on narrow viewports (notes flow inline as italic parentheticals after their markers), `inline` attribute for force-inline, sharper DPUB-ARIA semantics, collision-aware stacking at wide viewports via a minimal `ResizeObserver`-driven layout pass. Playwright tests cover real-browser layout.
+3. **Milestone 3** — fallback positioning when no `.has-sidenotes` container exists, `@media print` endnote stylesheet, `MutationObserver` for content edits that don't change container size.
 4. **Milestone 4** — documentation site, integration recipes for Eleventy / Astro / Hugo.
 
 ## License
@@ -164,7 +168,7 @@ No legacy / Internet Explorer support — web components and `:has()` are out of
 
 ## Acknowledgments
 
-Inspired by [Tufte CSS](https://edwardtufte.github.io/tufte-css/) and Edward Tufte's work on the marginalia tradition. The native [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) and CSS Anchor Positioning landing in browsers makes milestones 2 and 3 easier than they would have been a year ago.
+Inspired by [Tufte CSS](https://edwardtufte.github.io/tufte-css/) and Edward Tufte's work on the marginalia tradition. The narrow-viewport inline-parenthetical treatment follows the convention Tufte CSS established.
 
 ## Contributing
 

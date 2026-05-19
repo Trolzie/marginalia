@@ -15,7 +15,7 @@
     />
     <meta property="og:type" content="website" />
     <link rel="stylesheet" href="./style.css" />
-    <script type="module" src="../src/index.ts"></script>
+    <script type="module" src="./main.ts"></script>
   </head>
   <body>
     <article class="has-sidenotes">
@@ -160,6 +160,25 @@
           </side-note>
           — links, code, emphasis, anything that makes sense alongside a
           paragraph.
+        </p>
+
+        <p>
+          Notes are responsive without any JavaScript: at narrow viewports
+          they flow inline as italic parentheticals after their markers,
+          and at wide viewports they float into the margin.
+          <side-note>
+            Resize this window narrower than about 60rem (roughly 960px) to
+            watch the notes return to the prose flow. The switch is pure
+            CSS — no popover toggle, no tap to reveal, no scroll listener.
+          </side-note>
+          Authors who want a particular note to <em>always</em> read
+          inline regardless of viewport can opt in per note
+          <side-note inline>
+            Like this one: the <code>inline</code> attribute keeps the
+            note in the flow of the prose at any width. Handy for short
+            asides that don't need full marginal treatment.
+          </side-note>
+          via the <code>inline</code> attribute.
         </p>
       </section>
 

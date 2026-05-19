@@ -12,6 +12,11 @@ bun.lockb
 .vite/
 coverage/
 
+# Playwright outputs
+test-results/
+playwright-report/
+.playwright/
+
 # local Claude Code session state — not part of the project
 .claude/
 logs/

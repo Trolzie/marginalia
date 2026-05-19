@@ -1,3 +1,5 @@
+import { registerNote } from "./layout";
+
 const CONTAINER_STYLESHEET_ID = "side-note-container-styles";
 
 const CONTAINER_CSS = `
@@ -5,14 +7,21 @@ const CONTAINER_CSS = `
   position: relative;
   max-width: 40rem;
   margin-inline: auto;
-  padding-inline-end: calc(var(--side-note-width, 14rem) + var(--side-note-gap, 2rem));
   counter-reset: sidenote;
+  padding-inline-end: calc(var(--side-note-width, 14rem) + var(--side-note-gap, 2rem));
 }
-.has-sidenotes:has(side-note[data-side="left"]) {
+.has-sidenotes:has(side-note[side="left"]) {
   padding-inline-start: calc(var(--side-note-width, 14rem) + var(--side-note-gap, 2rem));
 }
 .has-sidenotes side-note {
   counter-increment: sidenote;
+}
+@media (max-width: 60rem) {
+  .has-sidenotes,
+  .has-sidenotes:has(side-note[side="left"]) {
+    padding-inline-end: 0;
+    padding-inline-start: 0;
+  }
 }
 `;
 
@@ -27,7 +36,6 @@ const SHADOW_HTML = `
     font-size: var(--side-note-marker-size, 0.75em);
     vertical-align: super;
     line-height: 1;
-    cursor: default;
   }
   .marker::before {
     content: var(--side-note-label, counter(sidenote));
@@ -41,7 +49,7 @@ const SHADOW_HTML = `
     line-height: 1.4;
     margin: 0;
   }
-  :host([data-side="left"]) .note {
+  :host([side="left"]) .note {
     inset-inline-end: auto;
     inset-inline-start: 0;
   }
@@ -50,9 +58,43 @@ const SHADOW_HTML = `
     font-weight: 600;
     margin-inline-end: 0.25em;
   }
+  @media (max-width: 60rem) {
+    .note {
+      position: static;
+      display: inline;
+      width: auto;
+      font-size: 0.92em;
+      font-style: italic;
+      opacity: 0.75;
+    }
+    .note::before {
+      content: " (";
+      font-weight: normal;
+      margin-inline-end: 0;
+    }
+    .note::after {
+      content: ")";
+    }
+  }
+  :host([inline]) .note {
+    position: static;
+    display: inline;
+    width: auto;
+    font-size: 0.92em;
+    font-style: italic;
+    opacity: 0.75;
+  }
+  :host([inline]) .note::before {
+    content: " (";
+    font-weight: normal;
+    margin-inline-end: 0;
+  }
+  :host([inline]) .note::after {
+    content: ")";
+  }
 </style>
-<span class="marker" part="marker" role="doc-noteref" tabindex="0"></span>
-<aside class="note" part="note">
+<span class="marker" part="marker" role="doc-noteref"></span>
+<aside class="note" part="note" role="doc-footnote">
   <slot></slot>
 </aside>
 `;
@@ -79,10 +121,11 @@ function escapeForCssString(value: string): string {
 }
 
 export class SideNote extends HTMLElement {
-  static readonly observedAttributes = ["side", "label", "inline"] as const;
+  static readonly observedAttributes = ["label"] as const;
 
   readonly #marker: HTMLSpanElement;
   readonly #note: HTMLElement;
+  #unregister?: () => void;
 
   constructor() {
     super();
@@ -102,26 +145,18 @@ export class SideNote extends HTMLElement {
     this.#note.id = noteId;
     this.#marker.setAttribute("aria-describedby", noteId);
 
-    const container = this.closest(".has-sidenotes") ?? this.ownerDocument.body;
-    const siblings = Array.from(container.querySelectorAll("side-note"));
-    const index = siblings.indexOf(this) + 1;
-    this.dataset.number = String(index);
-
-    this.#applySide();
     this.#applyLabel();
-    this.#applyInline();
+    this.#unregister = registerNote(this, this.#marker, this.#note);
+  }
+
+  disconnectedCallback(): void {
+    this.#unregister?.();
+    this.#unregister = undefined;
   }
 
   attributeChangedCallback(name: string): void {
     if (!this.isConnected) return;
-    if (name === "side") this.#applySide();
-    else if (name === "label") this.#applyLabel();
-    else if (name === "inline") this.#applyInline();
-  }
-
-  #applySide(): void {
-    const side = this.getAttribute("side");
-    this.dataset.side = side === "left" ? "left" : "right";
+    if (name === "label") this.#applyLabel();
   }
 
   #applyLabel(): void {
@@ -133,14 +168,6 @@ export class SideNote extends HTMLElement {
       );
     } else {
       this.style.removeProperty("--side-note-label");
-    }
-  }
-
-  #applyInline(): void {
-    if (this.hasAttribute("inline")) {
-      this.dataset.inline = "";
-    } else {
-      delete this.dataset.inline;
     }
   }
 }

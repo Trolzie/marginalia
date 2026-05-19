@@ -4,7 +4,7 @@ Project-specific instructions for Claude Code sessions in this repo. Read this a
 
 ## What this project is
 
-`<side-note>` — a custom HTML element that turns inline content into a Tufte-style sidenote: a numbered superscript marker stays in the prose where the author placed it, while the note's body floats into the page margin. Framework-agnostic, zero runtime dependencies, ships as both ESM and UMD so it works with a build step or as a plain `<script type="module">` from a CDN.
+`<side-note>` — a custom HTML element that turns inline content into a Tufte-style sidenote: a numbered superscript marker stays in the prose where the author placed it, while the note's body floats into the page margin at wide viewports or flows inline as an italic parenthetical at narrow viewports. Framework-agnostic, zero runtime dependencies, ships as both ESM and UMD so it works with a build step or as a plain `<script type="module">` from a CDN.
 
 ## Open source
 
@@ -38,9 +38,9 @@ Contributors may use any of npm, pnpm, or bun. Only `package-lock.json` is commi
 
 ## Test split
 
-- **Vitest** (with `happy-dom`) for unit logic — attribute reflection, id generation, shadow tree shape, numbering. Runs in CI on every change once CI lands.
-- **Playwright** lands with milestone 2, when the popover, keyboard, and responsive behaviour need real-browser verification.
+- **Vitest** (with `happy-dom`) for unit logic — id generation, shadow tree shape, ARIA wiring, attribute-driven CSS variable setting, layout-module registration lifecycle. Runs in CI on every change once CI lands.
+- **Playwright** for real-browser layout verification — collision stacking, narrow-viewport clear-and-fall-back, resize lifecycle. Runs against the demo site under `vite dev`. Three projects: Chromium, Firefox, WebKit. Run `npx playwright install` once before `npm run test:e2e`.
 
 ## Roadmap
 
-See README's Roadmap section for what's shipped vs planned. Currently on **milestone 1 of 4**: bare element with wide-viewport margin display.
+See README's Roadmap section for what's shipped vs planned. Currently on **milestone 2 of 4**: bare element with wide-viewport margin display, narrow-viewport inline display, `inline` attribute for force-inline, and collision-aware stacking at wide viewports.
