@@ -135,6 +135,9 @@ Set on the host or any ancestor.
 | `--side-note-gap` | `2rem` | Gap between content and notes |
 | `--side-note-font` | `inherit` | Font for note bodies (smaller faces work well) |
 | `--side-note-label` | unset | Programmatic override of marker text |
+| `--side-note-hover-color` | `currentColor` | Marker color on hover (and on focus, if a consumer makes the marker focusable) |
+| `--side-note-hover-bg` | `color-mix(in srgb, currentColor 6%, transparent)` | Note background tint on hover |
+| `--side-note-hover-weight` | `600` | Marker font-weight on hover |
 
 Authors who want deeper styling can target the shadow parts:
 

@@ -1,3 +1,17 @@
+# v0.2.1 — hover / focus cue
+
+Pure CSS, ~22 lines added to the shadow stylesheet. Bidirectional hover linking via `:host(:hover)` — pointer over marker or note (either side) highlights both. Margin mode: marker shifts colour + weight, note gets a subtle background tint with rounded corners. Inline mode (narrow viewport or `[inline]`): same marker shift; note opacity bumps from 0.75 → 1 so the hovered parenthetical pops out of the prose. Transitions gated by `@media (prefers-reduced-motion: no-preference)`. `:host(:focus-within)` mirrors `:host(:hover)` everywhere so keyboard users get the cue for free if any future milestone (or downstream consumer) makes the marker focusable.
+
+Three new theming hooks: `--side-note-hover-color`, `--side-note-hover-bg`, `--side-note-hover-weight`. All have working defaults — no configuration needed.
+
+## Files modified
+- `src/side-note.ts` — appended hover/focus rules to shadow stylesheet
+- `README.md` — three rows added to CSS custom properties table
+
+## Verification
+- [x] `npm run typecheck` / `lint` / `test` / `build` / `build:site`
+- [ ] User-run smoke test: hover a marker → both marker bolds and note tints; hover a margin note → marker bolds; at narrow viewport, hover a parenthetical → opacity goes to full; toggle "Reduce motion" → state changes become instant
+
 # v0.2 — milestone 2 (responsive display + collision detection)
 
 Two pieces shipped together as v0.2:

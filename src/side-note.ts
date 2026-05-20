@@ -75,6 +75,10 @@ const SHADOW_HTML = `
     .note::after {
       content: ")";
     }
+    :host(:hover) .note,
+    :host(:focus-within) .note {
+      opacity: 1;
+    }
   }
   :host([inline]) .note {
     position: static;
@@ -91,6 +95,28 @@ const SHADOW_HTML = `
   }
   :host([inline]) .note::after {
     content: ")";
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .marker {
+      transition: color 120ms ease, font-weight 120ms ease;
+    }
+    .note {
+      transition: background 120ms ease, opacity 120ms ease;
+    }
+  }
+  :host(:hover) .marker,
+  :host(:focus-within) .marker {
+    color: var(--side-note-hover-color, currentColor);
+    font-weight: var(--side-note-hover-weight, 600);
+  }
+  :host(:hover) .note,
+  :host(:focus-within) .note {
+    background: var(--side-note-hover-bg, color-mix(in srgb, currentColor 6%, transparent));
+    border-radius: 3px;
+  }
+  :host([inline]:hover) .note,
+  :host([inline]:focus-within) .note {
+    opacity: 1;
   }
 </style>
 <span class="marker" part="marker" role="doc-noteref"></span>
