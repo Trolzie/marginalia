@@ -1,6 +1,6 @@
 {
   "name": "side-note",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "A custom HTML element for Tufte-style sidenotes — inline marker, body floats into the page margin.",
   "type": "module",
   "main": "./dist/index.umd.js",

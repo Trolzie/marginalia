@@ -40,9 +40,9 @@ What that renders as (at wide viewports):
 
 `<side-note>` is one tag, no setup beyond a wrapper class, zero runtime deps, framework-free. Works in any HTML page, with or without a build step.
 
-## What's in v0.3
+## What's in v0.3.0
 
-Milestones 1, 2, and 3 of 4 — the bare element with margin display, narrow-viewport inline display, collision-aware stacking, drop-in fallback, and print support. Working today:
+All four roadmap milestones are complete. Working today:
 
 - Inline authoring (`<side-note>` anywhere in flow content)
 - Auto-incremented numbering, with `label` override
@@ -50,24 +50,28 @@ Milestones 1, 2, and 3 of 4 — the bare element with margin display, narrow-vie
 - **Wide viewport (> 60rem): notes display in the margin** (when wrapped in `.has-sidenotes`)
 - **Narrow viewport (≤ 60rem): notes flow inline as italic parentheticals — pure CSS, no JavaScript needed**
 - **Drop-in without the wrapper class**: a `<side-note>` outside any `.has-sidenotes` ancestor renders as an inline italic parenthetical with no number — zero setup required
-- **Print stylesheet**: under `@media print`, notes flow inline at full opacity (parentheticals after their markers), gutter padding collapses, max-width is lifted
+- **Print stylesheet**: under `@media print`, notes flow inline at full opacity, gutter padding collapses, max-width is lifted
 - **Collision-aware stacking at wide viewports**: when two markers sit close together, the second note stacks below the first instead of overlapping. Pure presentation; if JavaScript fails to load, notes fall back to anchor-only positioning and content stays fully accessible
 - **`inline` attribute to force inline display at any viewport**
 - Shadow-DOM encapsulation with `::part(marker)` / `::part(note)` for theming
 - Generated IDs and DPUB-ARIA wiring (`role="doc-noteref"` on marker, `role="doc-footnote"` on note, `aria-describedby` linking them)
 - Hover and `:focus-within` cue that links marker ↔ note bidirectionally
-- CI workflow (typecheck, lint, Vitest, Playwright across Chromium/Firefox/WebKit, build) runs on every PR
-
-Not yet — landing in the next milestone (see [Roadmap](#roadmap)):
-
-- Documentation site (milestone 4)
-- Integration recipes for Eleventy / Astro / Hugo
+- [Integration recipes](./recipes) for plain HTML, Eleventy, Astro, and Hugo
+- CI runs typecheck, lint, Vitest, and Playwright (Chromium/Firefox/WebKit) on every PR; tagged pushes auto-publish to npm with provenance
 
 ## Install
 
-> **Not yet published to npm.** The package name is reserved but unpublished pending milestone-1 review. Use the from-source path below until v0.1.0 lands.
+```sh
+npm i side-note     # or: pnpm add side-note  /  bun add side-note
+```
 
-### From source (works today)
+Or, with no build step, from a CDN:
+
+```html
+<script type="module" src="https://unpkg.com/side-note"></script>
+```
+
+### From source (for contributors)
 
 ```sh
 git clone https://github.com/Trolzie/marginalia.git
@@ -82,18 +86,6 @@ Then drop `dist/index.js` into your project and load it:
 <script type="module" src="./path/to/index.js"></script>
 ```
 
-### From npm (once v0.1.0 ships)
-
-```sh
-npm i side-note     # or: pnpm add side-note  /  bun add side-note
-```
-
-Or from a CDN with no build step:
-
-```html
-<script type="module" src="https://unpkg.com/side-note"></script>
-```
-
 ## Quickstart
 
 1. Drop `<side-note>` inline wherever you want a note.
@@ -103,7 +95,7 @@ Or from a CDN with no build step:
 <!doctype html>
 <html>
   <head>
-    <script type="module" src="./path/to/index.js"></script>
+    <script type="module" src="https://unpkg.com/side-note"></script>
   </head>
   <body>
     <article class="has-sidenotes">
@@ -116,6 +108,17 @@ Or from a CDN with no build step:
   </body>
 </html>
 ```
+
+For framework-specific setup, see [Integration recipes](#integration-recipes).
+
+## Integration recipes
+
+Setup notes for the most common stacks live in [`recipes/`](./recipes):
+
+- [Plain HTML](./recipes/plain-html.md) — drop-in via CDN, no build step
+- [Eleventy](./recipes/eleventy.md) — passthrough copy + base layout, optional paired shortcode
+- [Astro](./recipes/astro.md) — `import "side-note"` in a base layout
+- [Hugo](./recipes/hugo.md) — vendored bundle + optional shortcode
 
 ## Attributes
 
@@ -166,7 +169,7 @@ No legacy / Internet Explorer support — web components and `:has()` are out of
 1. ✅ **Milestone 1** — bare element, shadow DOM, attributes, CSS-counter numbering, wide-viewport margin display.
 2. ✅ **Milestone 2** — responsive inline display on narrow viewports (notes flow inline as italic parentheticals after their markers), `inline` attribute for force-inline, sharper DPUB-ARIA semantics, collision-aware stacking at wide viewports via a minimal `ResizeObserver`-driven layout pass. Playwright tests cover real-browser layout.
 3. ✅ **Milestone 3** — drop-in fallback when no `.has-sidenotes` ancestor is present (notes render as inline italic parentheticals), `@media print` stylesheet, CI workflow running typecheck/lint/Vitest/Playwright on every PR.
-4. **Milestone 4** — documentation site, integration recipes for Eleventy / Astro / Hugo.
+4. ✅ **Milestone 4** — npm publish at v0.3.0 (with provenance), integration recipes for plain HTML / Eleventy / Astro / Hugo, [CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 

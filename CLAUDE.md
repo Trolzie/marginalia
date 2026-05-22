@@ -43,4 +43,4 @@ Contributors may use any of npm, pnpm, or bun. Only `package-lock.json` is commi
 
 ## Roadmap
 
-See README's Roadmap section for what's shipped vs planned. Currently on **milestone 3 of 4**: bare element with wide-viewport margin display, narrow-viewport inline display, `inline` attribute, collision-aware stacking, drop-in fallback (no wrapper class required), and `@media print` support. CI workflow runs on every PR.
+See README's Roadmap section for what's shipped vs planned. **All four roadmap milestones are complete** at v0.3.0: bare element, margin/inline responsive display, `inline` attribute, collision-aware stacking, drop-in fallback (no wrapper class required), `@media print` support, integration recipes for plain HTML / Eleventy / Astro / Hugo, CI on every PR, and tag-triggered npm publish.

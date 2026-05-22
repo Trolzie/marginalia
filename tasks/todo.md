@@ -1,3 +1,77 @@
+# v0.3.0 — milestone 4 (recipes, npm publish, CHANGELOG)
+
+The final M4 bundle. No source/behaviour changes — entirely docs and distribution.
+
+## What landed
+
+### CHANGELOG.md (new)
+Keep-a-Changelog format with entries for v0.1.0, v0.2.0, v0.2.1, v0.3.0. Each entry has Added/Changed/Fixed sections as relevant. This is now the canonical record for what shipped when.
+
+### Package version bumped to 0.3.0
+`package.json` was still at 0.1.0 — the milestone label in docs had drifted ahead of the package version. Now aligned. The next `npm publish` ships as 0.3.0.
+
+### Integration recipes (4 new Markdown files)
+- `recipes/plain-html.md` — CDN drop-in, version pinning, self-hosted alternative
+- `recipes/eleventy.md` — passthrough copy + base layout, optional paired shortcode
+- `recipes/astro.md` — side-effect `import "side-note"` in a layout, works in `.astro` and `.md`
+- `recipes/hugo.md` — vendored bundle in `static/`, optional `{{< sidenote >}}` shortcode
+
+Each recipe is ≈ 30–80 lines: install + reference + usage example + framework-specific gotchas, with a link back to the README for full API reference. Cross-linked from a new "Integration recipes" section in the README between Quickstart and Attributes.
+
+### Tag-triggered publish workflow
+`.github/workflows/publish.yml` runs on any tag matching `v*`. Sequence: checkout, Node 22 setup with npm registry, `npm ci`, typecheck, lint, Vitest, build, `npm publish --provenance --access public`. Uses `NODE_AUTH_TOKEN` from a `NPM_TOKEN` repo secret. `--provenance` adds attestation pointing back to the GitHub Action that built it (signs the published bundle).
+
+### README rewrites
+- **Install section**: drops the "Not yet published" disclaimer. Promotes npm + CDN to primary; from-source is a "for contributors" section.
+- **Quickstart**: code example now uses the CDN script tag (was a `./path/to/index.js` placeholder).
+- **New "Integration recipes" section** between Quickstart and Attributes.
+- **What's in v0.3** → **What's in v0.3.0**, with recipes added to the feature list and the "Not yet — landing in the next milestone" footnote removed since the roadmap is complete.
+- **Roadmap**: M4 marked ✅.
+
+### Other small updates
+- `CLAUDE.md` — reflects that all four milestones are complete
+- `site/index.html` footer — `v0.3, milestone 3 of 4` → `v0.3.0`
+
+## User action required (one-time)
+Publishing requires npm credentials, which the workflow can't fabricate. Two options:
+
+**Option A (manual, simplest):**
+```sh
+git tag v0.3.0
+git push --tags
+# Set up NPM_TOKEN in repo secrets first, OR
+npm publish --access public  # locally, if logged in to npm
+```
+
+**Option B (workflow-driven, recommended for future):**
+1. Generate a granular npm token at https://www.npmjs.com/settings/<user>/tokens (publish scope, `side-note` package)
+2. Add it as `NPM_TOKEN` in repo secrets (Settings → Secrets → Actions)
+3. `git tag v0.3.0 && git push --tags` — the workflow picks up the tag and publishes
+
+After publish, verify at https://www.npmjs.com/package/side-note.
+
+## Files modified
+- `CHANGELOG.md` (new)
+- `package.json` — version 0.1.0 → 0.3.0
+- `recipes/plain-html.md`, `recipes/eleventy.md`, `recipes/astro.md`, `recipes/hugo.md` (new)
+- `.github/workflows/publish.yml` (new)
+- `README.md` — install/quickstart/recipes/roadmap/what's-in sections
+- `CLAUDE.md` — milestone summary
+- `site/index.html` — footer
+- This file
+
+## Verification
+- [x] `npm run typecheck` / `lint` / `test` (19 specs) / `build` / `build:site`
+- [ ] User-run: publish v0.3.0 to npm (see "User action required" above)
+- [ ] After publish: `npm i side-note` in a throwaway project, confirm import + usage works
+- [ ] Manual: open each recipe in GitHub's Markdown viewer, verify code fences and links
+
+## Out of scope (deferred)
+- Multi-page docs site (skipped — README + demo is enough for a one-component project)
+- Recipes for React, Vue, Next.js, SvelteKit (open issue if requested)
+- CONTRIBUTING.md (CLAUDE.md covers conventions already)
+- Playground / live editor on the demo
+
 # v0.3 — milestone 3 (fallback mode, print stylesheet, CI)
 
 Three small adds plus a CI workflow. All consistent with the project's non-invasive principle.
