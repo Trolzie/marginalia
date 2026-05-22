@@ -40,25 +40,28 @@ What that renders as (at wide viewports):
 
 `<side-note>` is one tag, no setup beyond a wrapper class, zero runtime deps, framework-free. Works in any HTML page, with or without a build step.
 
-## What's in v0.2
+## What's in v0.3
 
-Milestones 1 and 2 of 4 — the bare element with margin display, narrow-viewport inline display, and collision-aware stacking. Working today:
+Milestones 1, 2, and 3 of 4 — the bare element with margin display, narrow-viewport inline display, collision-aware stacking, drop-in fallback, and print support. Working today:
 
 - Inline authoring (`<side-note>` anywhere in flow content)
 - Auto-incremented numbering, with `label` override
 - `side="left"` / `"right"` (logical sides — `dir="rtl"` flips automatically)
-- **Wide viewport (> 60rem): notes display in the margin**
+- **Wide viewport (> 60rem): notes display in the margin** (when wrapped in `.has-sidenotes`)
 - **Narrow viewport (≤ 60rem): notes flow inline as italic parentheticals — pure CSS, no JavaScript needed**
-- **Collision-aware stacking at wide viewports**: when two markers sit close together, the second note stacks below the first instead of overlapping. Pure presentation; if JavaScript fails to load, notes fall back to anchor-only positioning (the M1 behaviour) and content stays fully accessible
+- **Drop-in without the wrapper class**: a `<side-note>` outside any `.has-sidenotes` ancestor renders as an inline italic parenthetical with no number — zero setup required
+- **Print stylesheet**: under `@media print`, notes flow inline at full opacity (parentheticals after their markers), gutter padding collapses, max-width is lifted
+- **Collision-aware stacking at wide viewports**: when two markers sit close together, the second note stacks below the first instead of overlapping. Pure presentation; if JavaScript fails to load, notes fall back to anchor-only positioning and content stays fully accessible
 - **`inline` attribute to force inline display at any viewport**
 - Shadow-DOM encapsulation with `::part(marker)` / `::part(note)` for theming
 - Generated IDs and DPUB-ARIA wiring (`role="doc-noteref"` on marker, `role="doc-footnote"` on note, `aria-describedby` linking them)
+- Hover and `:focus-within` cue that links marker ↔ note bidirectionally
+- CI workflow (typecheck, lint, Vitest, Playwright across Chromium/Firefox/WebKit, build) runs on every PR
 
-Not yet — landing in later milestones (see [Roadmap](#roadmap)):
+Not yet — landing in the next milestone (see [Roadmap](#roadmap)):
 
-- Fallback positioning when no `.has-sidenotes` container exists (milestone 3)
-- Print-mode endnote stylesheet (milestone 3)
-- `MutationObserver` for content edits that don't change container size (milestone 3)
+- Documentation site (milestone 4)
+- Integration recipes for Eleventy / Astro / Hugo
 
 ## Install
 
@@ -93,8 +96,8 @@ Or from a CDN with no build step:
 
 ## Quickstart
 
-1. Wrap any prose container in `class="has-sidenotes"`.
-2. Drop `<side-note>` inline wherever you want a note.
+1. Drop `<side-note>` inline wherever you want a note.
+2. *(Optional)* For Tufte-style margin display at wide viewports, wrap the prose container in `class="has-sidenotes"`. Without the wrapper, notes render inline as italic parentheticals.
 
 ```html
 <!doctype html>
@@ -162,7 +165,7 @@ No legacy / Internet Explorer support — web components and `:has()` are out of
 
 1. ✅ **Milestone 1** — bare element, shadow DOM, attributes, CSS-counter numbering, wide-viewport margin display.
 2. ✅ **Milestone 2** — responsive inline display on narrow viewports (notes flow inline as italic parentheticals after their markers), `inline` attribute for force-inline, sharper DPUB-ARIA semantics, collision-aware stacking at wide viewports via a minimal `ResizeObserver`-driven layout pass. Playwright tests cover real-browser layout.
-3. **Milestone 3** — fallback positioning when no `.has-sidenotes` container exists, `@media print` endnote stylesheet, `MutationObserver` for content edits that don't change container size.
+3. ✅ **Milestone 3** — drop-in fallback when no `.has-sidenotes` ancestor is present (notes render as inline italic parentheticals), `@media print` stylesheet, CI workflow running typecheck/lint/Vitest/Playwright on every PR.
 4. **Milestone 4** — documentation site, integration recipes for Eleventy / Astro / Hugo.
 
 ## License

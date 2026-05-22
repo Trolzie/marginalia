@@ -43,4 +43,4 @@ Contributors may use any of npm, pnpm, or bun. Only `package-lock.json` is commi
 
 ## Roadmap
 
-See README's Roadmap section for what's shipped vs planned. Currently on **milestone 2 of 4**: bare element with wide-viewport margin display, narrow-viewport inline display, `inline` attribute for force-inline, and collision-aware stacking at wide viewports.
+See README's Roadmap section for what's shipped vs planned. Currently on **milestone 3 of 4**: bare element with wide-viewport margin display, narrow-viewport inline display, `inline` attribute, collision-aware stacking, drop-in fallback (no wrapper class required), and `@media print` support. CI workflow runs on every PR.

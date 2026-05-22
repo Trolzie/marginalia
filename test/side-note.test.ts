@@ -168,6 +168,41 @@ describe("collision layout", () => {
   });
 });
 
+describe("fallback mode (no .has-sidenotes container)", () => {
+  beforeEach(() => {
+    document.body.innerHTML = "";
+    const stylesheet = document.getElementById("side-note-container-styles");
+    if (stylesheet) stylesheet.remove();
+  });
+
+  it("sets data-no-container on hosts without a .has-sidenotes ancestor", () => {
+    const stray = document.createElement("side-note") as SideNote;
+    stray.textContent = "no container here";
+    document.body.appendChild(stray);
+
+    expect(stray.hasAttribute("data-no-container")).toBe(true);
+  });
+
+  it("does not set data-no-container when wrapped in .has-sidenotes", () => {
+    const article = makeArticle();
+    const note = addNote(article);
+
+    expect(note.hasAttribute("data-no-container")).toBe(false);
+  });
+
+  it("clears data-no-container when moved into a .has-sidenotes container", () => {
+    const stray = document.createElement("side-note") as SideNote;
+    stray.textContent = "starts loose";
+    document.body.appendChild(stray);
+    expect(stray.hasAttribute("data-no-container")).toBe(true);
+
+    const article = makeArticle();
+    article.appendChild(stray);
+
+    expect(stray.hasAttribute("data-no-container")).toBe(false);
+  });
+});
+
 describe("registerNote SSR guard", () => {
   const originalRO = globalThis.ResizeObserver;
   afterEach(() => {

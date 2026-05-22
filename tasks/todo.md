@@ -1,3 +1,60 @@
+# v0.3 — milestone 3 (fallback mode, print stylesheet, CI)
+
+Three small adds plus a CI workflow. All consistent with the project's non-invasive principle.
+
+## What landed
+
+### Fallback mode (no `.has-sidenotes` container required)
+
+`<side-note>` outside a `.has-sidenotes` ancestor now renders as an inline italic parenthetical instead of breaking silently. Detection happens in `connectedCallback` via `this.closest('.has-sidenotes')`; if no match, sets `data-no-container` attribute on host. Shadow CSS gains `:host([data-no-container])` selectors that mirror the inline-mode rules (`position: static`, `display: inline`, italic, opacity 0.75, parenthesis prefix/suffix). The marker's counter is suppressed via a `:host([data-no-container]) .marker::before { content: var(--side-note-label, "") }` rule — so authors who pass `label="*"` still see their label, but the default is no number (per user direction: "ok with no number"). `registerNote` already no-ops without a container so layout JS sits out cleanly.
+
+### `@media print` stylesheet
+
+Container CSS in print: gutter padding zeroed, max-width lifted, so prose uses the page width. Shadow CSS in print: notes render inline as parentheticals at full opacity (no italic dimming for print — paper reading deserves max legibility).
+
+### CI workflow (`.github/workflows/test.yml`)
+
+Runs on push to main and on PRs. Sequence: typecheck → lint → Vitest → Playwright (Chromium + Firefox + WebKit) → `npm run build` → `npm run build:site`. Caches npm and Playwright browsers between runs. Uploads the Playwright HTML report as an artifact on failure for debugging.
+
+### Vitest specs added (3)
+
+- Stray host (no `.has-sidenotes` ancestor) gets `data-no-container` set on connect
+- Host wrapped in `.has-sidenotes` does *not* get the attribute
+- Moving a stray host into `.has-sidenotes` (via re-append) clears the attribute on re-connect
+
+### Playwright specs added (2)
+
+- **Fallback mode**: insert a stray `<side-note>` into the demo page, verify `data-no-container` set, computed `position: static`, `display: inline`, no inline `style.top` written
+- **Print emulation**: `page.emulateMedia({ media: 'print' })` → notes computed `position: static`, `display: inline`, `opacity ≈ 1`
+
+## Files modified
+- `src/side-note.ts` — `[data-no-container]` shadow CSS, fallback marker rule, `@media print` rules in both container CSS and shadow CSS, `connectedCallback` detection
+- `test/side-note.test.ts` — 3 new fallback specs
+- `e2e/sidenote.spec.ts` — 2 new describe blocks (fallback, print)
+- `.github/workflows/test.yml` (new) — CI workflow
+- `README.md` — v0.3 features section, M3 marked ✅ in roadmap, Quickstart updated to note wrapper is optional
+- `CLAUDE.md` — milestone counter
+- This file
+
+## Decisions captured
+- **Dropped `MutationObserver`** from the original M3 scope — real edits trigger `ResizeObserver` via line reflow; same-width word swaps don't shift markers; not worth the observer cost
+- **CI bundled with M3** rather than held separately — improves PR safety for an open-source repo where external contributions matter
+- **Fallback mode hides the counter** by default — user explicitly approved "no number"; labels still show if author provides one
+
+## Verification
+- [x] `npm run typecheck` / `lint` / `test` (19 specs) / `test:e2e` (21 cases × 3 browsers) / `build` / `build:site`
+- [ ] User-run smoke test:
+  - Drop a stray `<side-note>` in any page without `.has-sidenotes` → should render inline as italic parenthetical with no number
+  - Print preview the demo (Cmd+P) → notes should appear inline as parentheticals at full opacity, gutter padding gone
+  - CI: on next push or PR, the Test workflow should run and pass
+
+## Out of scope (deferred to milestone 4)
+- Documentation site
+- Integration recipes for Eleventy / Astro / Hugo
+- "Collected endnotes" treatment in print (single inline parenthetical is the v0.3 approach)
+- Scroll-following / sticky behaviour
+- `MutationObserver` for text edits without size change (dropped — over-engineering)
+
 # v0.2.1 — hover / focus cue
 
 Pure CSS, ~22 lines added to the shadow stylesheet. Bidirectional hover linking via `:host(:hover)` — pointer over marker or note (either side) highlights both. Margin mode: marker shifts colour + weight, note gets a subtle background tint with rounded corners. Inline mode (narrow viewport or `[inline]`): same marker shift; note opacity bumps from 0.75 → 1 so the hovered parenthetical pops out of the prose. Transitions gated by `@media (prefers-reduced-motion: no-preference)`. `:host(:focus-within)` mirrors `:host(:hover)` everywhere so keyboard users get the cue for free if any future milestone (or downstream consumer) makes the marker focusable.

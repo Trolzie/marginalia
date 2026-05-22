@@ -23,6 +23,14 @@ const CONTAINER_CSS = `
     padding-inline-start: 0;
   }
 }
+@media print {
+  .has-sidenotes,
+  .has-sidenotes:has(side-note[side="left"]) {
+    padding-inline-end: 0;
+    padding-inline-start: 0;
+    max-width: none;
+  }
+}
 `;
 
 const SHADOW_HTML = `
@@ -80,7 +88,8 @@ const SHADOW_HTML = `
       opacity: 1;
     }
   }
-  :host([inline]) .note {
+  :host([inline]) .note,
+  :host([data-no-container]) .note {
     position: static;
     display: inline;
     width: auto;
@@ -88,13 +97,36 @@ const SHADOW_HTML = `
     font-style: italic;
     opacity: 0.75;
   }
-  :host([inline]) .note::before {
+  :host([inline]) .note::before,
+  :host([data-no-container]) .note::before {
     content: " (";
     font-weight: normal;
     margin-inline-end: 0;
   }
-  :host([inline]) .note::after {
+  :host([inline]) .note::after,
+  :host([data-no-container]) .note::after {
     content: ")";
+  }
+  :host([data-no-container]) .marker::before {
+    content: var(--side-note-label, "");
+  }
+  @media print {
+    .note {
+      position: static;
+      display: inline;
+      width: auto;
+      font-size: 0.92em;
+      font-style: italic;
+      opacity: 1;
+    }
+    .note::before {
+      content: " (";
+      font-weight: normal;
+      margin-inline-end: 0;
+    }
+    .note::after {
+      content: ")";
+    }
   }
   @media (prefers-reduced-motion: no-preference) {
     .marker {
@@ -115,7 +147,9 @@ const SHADOW_HTML = `
     border-radius: 3px;
   }
   :host([inline]:hover) .note,
-  :host([inline]:focus-within) .note {
+  :host([inline]:focus-within) .note,
+  :host([data-no-container]:hover) .note,
+  :host([data-no-container]:focus-within) .note {
     opacity: 1;
   }
 </style>
@@ -170,6 +204,12 @@ export class SideNote extends HTMLElement {
     const noteId = `${this.id}-note`;
     this.#note.id = noteId;
     this.#marker.setAttribute("aria-describedby", noteId);
+
+    if (this.closest(".has-sidenotes")) {
+      this.removeAttribute("data-no-container");
+    } else {
+      this.setAttribute("data-no-container", "");
+    }
 
     this.#applyLabel();
     this.#unregister = registerNote(this, this.#marker, this.#note);

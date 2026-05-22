@@ -100,6 +100,74 @@ test.describe("<side-note> at narrow viewport", () => {
   });
 });
 
+test.describe("fallback mode (no .has-sidenotes container)", () => {
+  test("renders inline when no wrapper class is present", async ({ page }) => {
+    await page.setViewportSize({ width: 1400, height: 900 });
+    await page.goto("/");
+    await waitForLayout(page);
+
+    await page.evaluate(() => {
+      const wrapper = document.createElement("div");
+      wrapper.id = "fallback-wrapper";
+      wrapper.innerHTML = `<p>Prose with a stray <side-note id="stray">unwrapped note body</side-note> in it.</p>`;
+      document.body.appendChild(wrapper);
+    });
+
+    await page.evaluate(
+      () => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))),
+    );
+
+    const result = await page.evaluate(() => {
+      const host = document.getElementById("stray") as HTMLElement | null;
+      if (!host) return null;
+      const aside = host.shadowRoot?.querySelector("aside.note") as HTMLElement | null;
+      const computed = aside ? getComputedStyle(aside) : null;
+      return {
+        dataNoContainer: host.hasAttribute("data-no-container"),
+        position: computed?.position,
+        display: computed?.display,
+        inlineStyleTop: aside?.style.top ?? "",
+      };
+    });
+
+    expect(result).not.toBeNull();
+    expect(result!.dataNoContainer, "fallback hosts get the data-no-container marker").toBe(true);
+    expect(result!.position, "fallback note should be statically positioned").toBe("static");
+    expect(result!.display, "fallback note should be inline").toBe("inline");
+    expect(result!.inlineStyleTop, "layout JS should not set style.top on fallback notes").toBe("");
+  });
+});
+
+test.describe("print media", () => {
+  test("notes render inline at full opacity under print emulation", async ({ page }) => {
+    await page.setViewportSize({ width: 1400, height: 900 });
+    await page.goto("/");
+    await waitForLayout(page);
+
+    await page.emulateMedia({ media: "print" });
+    await page.evaluate(
+      () => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))),
+    );
+
+    const result = await page.evaluate(() => {
+      const host = document.querySelector("side-note") as HTMLElement | null;
+      if (!host) return null;
+      const aside = host.shadowRoot?.querySelector("aside.note") as HTMLElement | null;
+      const computed = aside ? getComputedStyle(aside) : null;
+      return {
+        position: computed?.position,
+        display: computed?.display,
+        opacity: computed?.opacity,
+      };
+    });
+
+    expect(result).not.toBeNull();
+    expect(result!.position, "print should override to static").toBe("static");
+    expect(result!.display, "print should override to inline").toBe("inline");
+    expect(parseFloat(result!.opacity ?? "0"), "print should restore full opacity").toBeGreaterThan(0.99);
+  });
+});
+
 test.describe("resize lifecycle", () => {
   test("recomputes tops when growing back from narrow to wide", async ({ page }) => {
     await page.setViewportSize({ width: 1400, height: 900 });
